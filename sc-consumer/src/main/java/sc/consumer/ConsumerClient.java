@@ -12,10 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author jiang
  *
  */
-@FeignClient("service")
+@FeignClient(value = "consumerClient")
 public interface ConsumerClient {
 
     @RequestMapping(method = RequestMethod.GET, value = "/test")
     String test(@RequestParam("str") String str);
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getUUID")
+    String getUUID();
 
 }
