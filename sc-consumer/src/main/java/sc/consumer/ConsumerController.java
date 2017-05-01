@@ -3,18 +3,18 @@
  */
 package sc.consumer;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 
 /**
@@ -30,19 +30,12 @@ public class ConsumerController {
     ConsumerClient consumerClient;
     
     @Autowired
-    private DiscoveryClient client;
+    private RestTemplate restTemplate;
     
     Map<String, Integer> index = new ConcurrentHashMap<>();
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String test(String str) {
-    	List<String> servicsList = client.getServices();
-    	for (String string : servicsList) {
-    		List<ServiceInstance> inList = client.getInstances(string);
-    		for (ServiceInstance serviceInstance : inList) {
-    			System.out.println("实例:"+serviceInstance);;
-			}
-		}
         return str + "::::::" + consumerClient.test(str);
     }
     
@@ -64,7 +57,12 @@ public class ConsumerController {
     }
     
     private void doservice(){
-    	String UUID = consumerClient.getUUID();
+    	
+    	ResponseEntity<String> response = restTemplate.exchange("http://sc-provider/getUUID",
+   			 HttpMethod.GET, null, String.class);
+    	System.out.println(response.getBody());
+    	
+    	String UUID = response.getBody();
 		if(null == index.get(UUID)){
 			index.put(UUID, 0);
 		}else{

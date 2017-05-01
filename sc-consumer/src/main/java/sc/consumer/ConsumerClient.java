@@ -18,7 +18,4 @@ public interface ConsumerClient {
     @RequestMapping(method = RequestMethod.GET, value = "/test")
     String test(@RequestParam("str") String str);
     
-    @RequestMapping(method = RequestMethod.GET, value = "/getUUID")
-    String getUUID();
-
 }
